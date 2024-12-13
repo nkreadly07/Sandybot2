@@ -4,7 +4,7 @@ from redbot.core import commands as red_commands
 from redbot.core.bot import Red
 from discord.utils import get
 from redbot.core import Config
-import youtube_dl
+import yt_dlp as youtube_dl  # Updated import
 import asyncio
 
 class Music(red_commands.Cog):
@@ -39,7 +39,7 @@ class Music(red_commands.Cog):
         }
 
         try:
-            with youtube_dl.YoutubeDL(ydl_opts) as ydl:
+            with youtube_dl.YoutubeDL(ydl_opts) as ydl:  # No change here
                 info = ydl.extract_info(url, download=False)
                 url2 = info['formats'][0]['url']
                 source = await discord.FFmpegOpusAudio.from_probe(url2, method="fallback")
@@ -66,5 +66,9 @@ class Music(red_commands.Cog):
     @red_commands.command()
     async def skip(self, ctx):
         """Skip the currently playing song."""
-        voice_client = get(self.bot.voice_clients, guild
-
+        voice_client = get(self.bot.voice_clients, guild=ctx.guild)
+        if voice_client and voice_client.is_playing():
+            voice_client.stop()
+            await ctx.send("Skipped the current song.")
+        else:
+            await ctx.send("No song is currently playing.")
