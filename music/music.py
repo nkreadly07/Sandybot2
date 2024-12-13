@@ -15,7 +15,7 @@ class Music(red_commands.Cog):
         self.config = Config.get_conf(self, identifier=1234567890)  # Replace with your unique identifier
         self.queue = []
 
-    @red_commands.command()
+    @red_commands.command(name="mplay")
     async def play(self, ctx, url: str):
         """Play a song from a YouTube link."""
         voice_channel = ctx.author.voice.channel
@@ -66,10 +66,5 @@ class Music(red_commands.Cog):
     @red_commands.command()
     async def skip(self, ctx):
         """Skip the currently playing song."""
-        voice_client = get(self.bot.voice_clients, guild=ctx.guild)
-        if voice_client and voice_client.is_playing():
-            voice_client.stop()
-            await ctx.send("Skipped the current song.")
-        else:
-            await ctx.send("No song is currently playing.")
+        voice_client = get(self.bot.voice_clients, guild
 
