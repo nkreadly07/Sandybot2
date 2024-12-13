@@ -1,0 +1,20 @@
+[0;1;32m*[0m red@SandyBot2.0.service - SandyBot2.0 redbot
+     Loaded: loaded (/etc/systemd/system/red@.service; enabled; vendor preset: enabled)
+     Active: [0;1;32mactive (running)[0m since Fri 2024-12-13 19:54:24 UTC; 4s ago
+   Main PID: 10143 (python)
+      Tasks: 9 (limit: 77175)
+     Memory: 60.8M
+        CPU: 1.109s
+     CGroup: /system.slice/system-red.slice/red@SandyBot2.0.service
+             `-10143 /root/redenv/bin/python -O -m redbot SandyBot2.0 --no-prompt
+
+Dec 13 19:54:28 red python[10143]: ╭───────── SandyBot2.0 ─────────╮ ╭─────────────────────╮
+Dec 13 19:54:28 red python[10143]: │  Prefixes           │ ~       │ │  Shards       │ 1   │
+Dec 13 19:54:28 red python[10143]: │  Language           │ en-US   │ │  Servers      │ 1   │
+Dec 13 19:54:28 red python[10143]: │  Red version        │ 3.5.13  │ │  Unique Users │ 32  │
+Dec 13 19:54:28 red python[10143]: │  Discord.py version │ 2.4.0   │ ╰─────────────────────╯
+Dec 13 19:54:28 red python[10143]: │  Storage type       │ JSON    │
+Dec 13 19:54:28 red python[10143]: ╰───────────────────────────────╯
+Dec 13 19:54:28 red python[10143]: Loaded 4 cogs with 48 commands
+Dec 13 19:54:28 red python[10143]: Invite URL:
+Dec 13 19:54:28 red python[10143]: https://discord.com/oauth2/authorize?client_id=1317193327782789274&scope=bot
