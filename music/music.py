@@ -12,7 +12,7 @@ class Music(red_commands.Cog):
 
     def __init__(self, bot: Red):
         self.bot = bot
-        self.config = Config.get_conf(self, identifier=1234567890)  # Replace with your unique identifier
+        self.config = Config.get_conf(self, identifier=9876543210)
         self.queue = []
 
     @red_commands.command(name="mplay")
@@ -27,6 +27,8 @@ class Music(red_commands.Cog):
 
         if not voice_client:
             voice_client = await voice_channel.connect()
+        elif voice_client.channel != voice_channel:
+            await voice_client.move_to(voice_channel)
 
         ydl_opts = {
             'format': 'bestaudio/best',
@@ -35,17 +37,30 @@ class Music(red_commands.Cog):
                 'preferredcodec': 'mp3',
                 'preferredquality': '192',
             }],
+            'quiet': True,
+            'extract_flat': False,
             'noplaylist': True,
         }
 
+        ffmpeg_options = {
+            'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5',
+            'options': '-vn',
+        }
+
         try:
-            with youtube_dl.YoutubeDL(ydl_opts) as ydl:  # No change here
+            with youtube_dl.YoutubeDL(ydl_opts) as ydl:
                 info = ydl.extract_info(url, download=False)
                 url2 = info['formats'][0]['url']
-                source = await discord.FFmpegOpusAudio.from_probe(url2, method="fallback")
+                source = discord.FFmpegOpusAudio(url2, **ffmpeg_options)
 
             if not voice_client.is_playing():
-                voice_client.play(source, after=lambda e: print(f"Player error: {e}") if e else None)
+                def after_play(err):
+                    if self.queue:
+                        next_url, next_title = self.queue.pop(0)
+                        next_source = discord.FFmpegOpusAudio(next_url, **ffmpeg_options)
+                        voice_client.play(next_source, after=after_play)
+                
+                voice_client.play(source, after=after_play)
                 await ctx.send(f"Now playing: {info['title']}")
             else:
                 self.queue.append((url2, info['title']))
@@ -58,6 +73,7 @@ class Music(red_commands.Cog):
         """Stop the music and disconnect."""
         voice_client = get(self.bot.voice_clients, guild=ctx.guild)
         if voice_client and voice_client.is_connected():
+            self.queue.clear()  # Clear the queue
             await voice_client.disconnect()
             await ctx.send("Disconnected from the voice channel.")
         else:
